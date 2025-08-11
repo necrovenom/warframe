@@ -3,20 +3,19 @@ import requests
 import json
 
 # URL to the raw JSON file
-url = 'https://raw.githubusercontent.com/WFCD/warframe-items/master/data/json/Mods.json'
+# url = 'https://raw.githubusercontent.com/WFCD/warframe-items/master/data/json/Mods.json'
 
-
-def getData():
-    # Fetch the data
-    response = requests.get(url)
-    # Check for successful request
-    if response.status_code == 200:
-        mods_data = response.json()  # Parse JSON directly
-        print(f"Successfully fetched {len(mods_data)} mods.")
-        # Optionally, print a sample
-        print(json.dumps(mods_data[0], indent=2))
-    else:
-        print(f"Failed to fetch data. Status code: {response.status_code}")
+# def getData():
+#     # Fetch the data
+#     response = requests.get(url)
+#     # Check for successful request
+#     if response.status_code == 200:
+#         mods_data = response.json()  # Parse JSON directly
+#         print(f"Successfully fetched {len(mods_data)} mods.")
+#         # Optionally, print a sample
+#         print(json.dumps(mods_data[0], indent=2))
+#     else:
+#         print(f"Failed to fetch data. Status code: {response.status_code}")
 
 # ---------------------------------------------------------------
 
@@ -32,7 +31,7 @@ if 'selected_option' not in st.session_state:
     st.session_state.selected_option = None
 
 # Main application
-getData()
+# getData()
 st.title("🔽 Simple Dropdown Selection")
 st.write("Please select an option from the dropdown below and click submit.")
 
