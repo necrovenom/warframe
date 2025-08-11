@@ -94,7 +94,7 @@ def displayOrders(all_orders: List[Dict[str, Any]]):
             locations) if locations else "Unknown Location"
 
         print(
-            f"  • {ingame_name} [Rank {mod_rank}] → {platinum} platinum → {mod_name} | Locations: {locations_str} | https://warframe.market/items/{mod_url}/orders"
+            f"  • {ingame_name} [Rank {mod_rank}] → {platinum} platinum → {mod_name} | Locations: {locations_str} | https://warframe.market/items/{mod_url}"
         )
 
 
