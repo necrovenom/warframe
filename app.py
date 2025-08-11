@@ -63,68 +63,103 @@ def fetch_orders_for_mod(mod_name: str, mod_url: str) -> List[Order]:
     return []
 
 
-def displayOrders(all_orders: List[Order]):
-    """Displays all sell orders from in-game users, sorted by highest price."""
-    print("\n📦 All Orders (in-game users, sorted by price high → low):")
+def displayOrders(all_orders: List[Dict[str, Any]]):
+    print("\nAll Orders (sorted by price: high → low, in-game users only):")
 
+    # Filter only visible, in-game, sell orders
     sell_orders = [
         order for order in all_orders
-        if (order.get("visible") and order.get("order_type") == "buy"
+        if (order.get("visible") and order.get("order_type") == "sell"
             and order.get("user", {}).get("status") == "ingame")
     ]
 
+    # Sort descending by platinum
     sorted_orders = sorted(sell_orders,
                            key=lambda x: x.get("platinum", 0),
                            reverse=True)
 
     if not sorted_orders:
-        print("❌ No in-game sellers found.")
+        print("  No in-game sellers found.")
         return
 
     for order in sorted_orders:
         user = order.get("user", {})
+        ingame_name = user.get("ingame_name", "Unknown")
+        mod_name = order.get("mod_name", "Unknown Mod")
+        mod_url = order.get("mod_url", "")
+        mod_rank = order.get("mod_rank", "N/A")
+        platinum = order.get("platinum", "N/A")
+        locations = order.get("mod_locations", [])
+        locations_str = ", ".join(
+            locations) if locations else "Unknown Location"
+
         print(
-            f"  • {user.get('ingame_name', 'Unknown')} "
-            f"[Rank {order.get('mod_rank', 'N/A')}] → {order.get('platinum', 'N/A')} platinum → {order['mod_name']} | https://warframe.market/items/{order['mod_url']}"
+            f"  • {ingame_name} [Rank {mod_rank}] → {platinum} platinum → {mod_name} | Locations: {locations_str} | https://warframe.market/items/{mod_url}/orders"
         )
 
 
 def loc():
-    """Main logic: get location input, find matching mods, fetch orders, and display results."""
-    print("1. Arbiters of Hexis", "2. Cephalon Suda", "3. Steel Meridian")
+    """Allow searching by location via menu numbers or custom strings (or both). Then fetch and display sorted orders."""
+    locations_map = {
+        "1": "Arbiters of Hexis,",
+        "2": "Cephalon Suda,",
+        "3": "Steel Meridian,"
+    }
 
-    search_string = input("Enter location: ")
+    print("Select one or more locations (number or name):")
+    for key, name in locations_map.items():
+        print(f"{key}. {name.strip(',')}")
 
-    if search_string == "1":
-        search_string = "Arbiters of Hexis,"
-    elif search_string == "2":
-        search_string = "Cephalon Suda,"
-    elif search_string == "3":
-        search_string = "Steel Meridian,"
+    user_input = input(
+        "Enter location name(s) or number(s) (e.g., '1 3 Hydron'): ").strip(
+        ).split()
 
-    search_string = search_string.strip().lower()
+    # Process input: convert numbers via map, keep others as custom locations
+    selected_locations = []
+    for val in user_input:
+        if val in locations_map:
+            selected_locations.append(locations_map[val].strip().lower())
+        else:
+            selected_locations.append(val.strip().lower())
 
-    matching_mods = [
-        mod.get("name", "Unknown Mod") for mod in mods_data
-        if any(search_string in drop.get("location", "").lower()
-               for drop in mod.get("drops", []))
-    ]
-
-    if not matching_mods:
-        print(f"\n❌ No mods found at locations matching '{search_string}'.")
+    if not selected_locations:
+        print("❌ Invalid input. Please enter at least one valid location.")
         return
 
-    print(f"\n🔍 {len(matching_mods)} mods found at '{search_string}':")
-    for mod in matching_mods:
+    print(
+        f"\n🔍 Searching for mods dropped at: {', '.join(selected_locations)}")
+
+    matching_mods = set()
+    mod_locations = {}
+
+    for mod in mods_data:
+        for drop in mod.get("drops", []):
+            location = drop.get("location", "").lower()
+            if any(search in location for search in selected_locations):
+                mod_name = mod.get("name", "Unknown Mod")
+                matching_mods.add(mod_name)
+                mod_locations.setdefault(mod_name, set()).add(
+                    drop.get("location", "Unknown Location"))
+                break
+
+    if not matching_mods:
+        print("❌ No mods found for the selected location(s).")
+        return
+
+    print(f"\n✅ {len(matching_mods)} mods found:")
+    for mod in sorted(matching_mods):
         print(f" - {mod}")
 
-    all_orders: List[Order] = []
+    all_orders: List[Dict[str, Any]] = []
     for mod_name in matching_mods:
         mod_url = find_market_url(mod_name)
         if not mod_url:
             print(f"  ↳ Market data not found for '{mod_name}'")
             continue
-        all_orders.extend(fetch_orders_for_mod(mod_name, mod_url))
+        orders = fetch_orders_for_mod(mod_name, mod_url)
+        for order in orders:
+            order["mod_locations"] = mod_locations.get(mod_name, [])
+        all_orders.extend(orders)
 
     displayOrders(all_orders)
 
