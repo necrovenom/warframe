@@ -2,7 +2,7 @@ modules = ["python-3.11"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["wget"]
+packages = ["wget", "pyflyby"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -28,9 +28,6 @@ author = "agent"
 task = "shell.exec"
 args = "streamlit run app.py --server.port 5000"
 waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[ports]]
 localPort = 5000
