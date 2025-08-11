@@ -69,7 +69,7 @@ def displayOrders(all_orders: List[Dict[str, Any]]):
     # Filter only visible, in-game, sell orders
     sell_orders = [
         order for order in all_orders
-        if (order.get("visible") and order.get("order_type") == "sell"
+        if (order.get("visible") and order.get("order_type") == "buy"
             and order.get("user", {}).get("status") == "ingame")
     ]
 
@@ -101,9 +101,9 @@ def displayOrders(all_orders: List[Dict[str, Any]]):
 def loc():
     """Allow searching by location via menu numbers or custom strings (or both). Then fetch and display sorted orders."""
     locations_map = {
-        "1": "Arbiters of Hexis,",
-        "2": "Cephalon Suda,",
-        "3": "Steel Meridian,"
+        "1": "Arbiters of Hexis",
+        "2": "Cephalon Suda",
+        "3": "Steel Meridian"
     }
 
     print("Select one or more locations (number or name):")
