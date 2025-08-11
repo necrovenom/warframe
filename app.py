@@ -103,7 +103,8 @@ def loc():
     locations_map = {
         "1": "Arbiters of Hexis",
         "2": "Cephalon Suda",
-        "3": "Steel Meridian"
+        "3": "Steel Meridian",
+        "4": "Entrati"
     }
 
     print("Select one or more locations (number or name):")
@@ -111,8 +112,8 @@ def loc():
         print(f"{key}. {name.strip(',')}")
 
     user_input = input(
-        "Enter location name(s) or number(s) (e.g., '1 3 Hydron'): ").strip(
-        ).split()
+        "Enter location name(s) or number(s) (e.g., '1,3,Hydron'): ").strip(
+        ).split(",")
 
     # Process input: convert numbers via map, keep others as custom locations
     selected_locations = []
@@ -148,7 +149,8 @@ def loc():
 
     print(f"\n✅ {len(matching_mods)} mods found:")
     for mod in sorted(matching_mods):
-        print(f" - {mod}")
+        locations = mod_locations.get(mod, ["Unknown Location"])
+        print(f" - {mod} → {', '.join(locations)}")
 
     all_orders: List[Dict[str, Any]] = []
     for mod_name in matching_mods:
