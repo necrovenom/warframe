@@ -26,4 +26,5 @@ user_text = st.text_input(
 
 # Submit button
 if st.button("Submit", type="primary"):
-    if user_text.strip():  # Check if input is not empty
+    if user_text.strip():
+        print(user_text)
