@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sys
 import io
+import requests
+from typing import List, Dict, Any
+
 from contextlib import redirect_stdout
 from typing import List, Dict, Any
 
@@ -12,6 +15,7 @@ app = Flask(__name__)
 # Global variables to store search results
 search_results = {}
 
+
 def modified_loc(user_locations: str) -> Dict[str, Any]:
     """Modified version of loc() that returns results instead of printing them"""
     # Ensure data is loaded
@@ -19,17 +23,17 @@ def modified_loc(user_locations: str) -> Dict[str, Any]:
         getMods()
     if not market_data:
         getMarket()
-    
+
     locations_map = {
         "1": "Arbiters of Hexis",
-        "2": "Cephalon Suda", 
+        "2": "Cephalon Suda",
         "3": "Steel Meridian",
         "4": "Entrati"
     }
-    
+
     # Process user input
     user_input = user_locations.strip().split(",")
-    
+
     # Process input: convert numbers via map, keep others as custom locations
     selected_locations = []
     for val in user_input:
@@ -38,13 +42,15 @@ def modified_loc(user_locations: str) -> Dict[str, Any]:
             selected_locations.append(locations_map[val].strip().lower())
         else:
             selected_locations.append(val.strip().lower())
-    
+
     if not selected_locations:
-        return {"error": "Invalid input. Please enter at least one valid location."}
-    
+        return {
+            "error": "Invalid input. Please enter at least one valid location."
+        }
+
     matching_mods = set()
     mod_locations = {}
-    
+
     for mod in mods_data:
         for drop in mod.get("drops", []):
             location = drop.get("location", "").lower()
@@ -54,14 +60,14 @@ def modified_loc(user_locations: str) -> Dict[str, Any]:
                 mod_locations.setdefault(mod_name, set()).add(
                     drop.get("location", "Unknown Location"))
                 break
-    
+
     if not matching_mods:
         return {"error": "No mods found for the selected location(s)."}
-    
+
     # Convert sets to lists for JSON serialization
     for mod_name in mod_locations:
         mod_locations[mod_name] = list(mod_locations[mod_name])
-    
+
     # Fetch market orders
     all_orders: List[Dict[str, Any]] = []
     for mod_name in matching_mods:
@@ -72,48 +78,51 @@ def modified_loc(user_locations: str) -> Dict[str, Any]:
         for order in orders:
             order["mod_locations"] = mod_locations.get(mod_name, [])
         all_orders.extend(orders)
-    
+
     # Filter and sort orders (only visible, in-game, buy orders)
     sell_orders = [
         order for order in all_orders
         if (order.get("visible") and order.get("order_type") == "buy"
             and order.get("user", {}).get("status") == "ingame")
     ]
-    
+
     # Sort descending by platinum
     sorted_orders = sorted(sell_orders,
-                          key=lambda x: x.get("platinum", 0),
-                          reverse=True)
-    
+                           key=lambda x: x.get("platinum", 0),
+                           reverse=True)
+
     return {
         "mods_found": mod_locations,
         "orders": sorted_orders,
         "search_query": user_locations
     }
 
+
 @app.route('/')
 def index():
     """Show the main search form"""
     return render_template('index.html')
 
+
 @app.route('/search', methods=['POST'])
 def search():
     """Handle form submission and show results"""
     locations = request.form.get('locations', '')
-    
+
     if not locations:
-        return render_template('results.html', 
-                             error="Please enter at least one location",
-                             search_query="")
-    
+        return render_template('results.html',
+                               error="Please enter at least one location",
+                               search_query="")
+
     # Call the modified loc function
     results = modified_loc(locations)
-    
-    return render_template('results.html', 
-                         mods_found=results.get('mods_found', {}),
-                         orders=results.get('orders', []),
-                         error=results.get('error'),
-                         search_query=results.get('search_query', locations))
+
+    return render_template('results.html',
+                           mods_found=results.get('mods_found', {}),
+                           orders=results.get('orders', []),
+                           error=results.get('error'),
+                           search_query=results.get('search_query', locations))
+
 
 if __name__ == '__main__':
     # Initialize data on startup
@@ -121,6 +130,6 @@ if __name__ == '__main__':
     getMods()
     getMarket()
     print("Data loaded successfully!")
-    
+
     # Run the Flask app
     app.run(host='0.0.0.0', port=5000, debug=True)
