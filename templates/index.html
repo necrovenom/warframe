@@ -90,22 +90,10 @@
             <div class="location-option">4. Entrati</div>
         </div>
         
-        <form method="POST" action="/search">
-            <div class="form-group">
-                <label for="locations">Enter Location(s):</label>
-                <input 
-                    type="text" 
-                    id="locations" 
-                    name="locations" 
-                    placeholder="e.g., '1,3,Hydron' or 'Arbiters of Hexis,Hydron'"
-                    required
-                >
-                <div class="help-text">
-                    Enter location name(s) or number(s). You can use multiple locations separated by commas.
-                </div>
-            </div>
-            
-            <button type="submit">Search Mods</button>
+        <form action="{{ url_for('search') }}" method="post">
+            <label>Enter Syndicate or location names (e.g., 1, 2 or Arbitrers):</label><br>
+            <input type="text" name="locations" required>
+            <button type="submit">Search</button>
         </form>
     </div>
 </body>
