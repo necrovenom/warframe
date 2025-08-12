@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sys
 import io
-import requests
+
 from typing import List, Dict, Any
 
 from contextlib import redirect_stdout
