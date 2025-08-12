@@ -132,10 +132,10 @@ def modified_loc(user_locations: str) -> Dict[str, Any]:
     for val in user_input:
         val = val.strip()
         if val in locations_map:
-            print(locations_map[val])
+            print(locations_map[val], file=sys.stderr)
             selected_locations.append(locations_map[val].strip().lower())
         else:
-            print(val)
+            print(val, file=sys.stderr)
             selected_locations.append(val.strip().lower())
 
     if not selected_locations:
