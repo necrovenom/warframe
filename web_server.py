@@ -125,7 +125,7 @@ def modified_loc(user_locations: str) -> Dict[str, Any]:
     }
 
     # Process user input
-    user_input = user_locations.strip().split(",")
+    user_input = user_locations.split(",")
 
     # Process input: convert numbers via map, keep others as custom locations
     selected_locations = []
