@@ -32,6 +32,7 @@ def getMods():
     if data:
         mods_data = data
         print(f"✅ Fetched {len(mods_data)} mods.")
+    return mods_data
 
 
 def getMarket():
