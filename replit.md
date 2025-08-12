@@ -1,8 +1,8 @@
-# Simple Dropdown Selection App
+# Simple Input Form App
 
 ## Overview
 
-A minimal Streamlit web application that demonstrates basic user interaction through a dropdown selection interface. The app presents users with a list of technology-related options, allows them to make a selection, and provides feedback upon submission. This serves as a foundational example for building more complex form-based applications with Streamlit.
+A minimal Streamlit web application that demonstrates basic user interaction through a text input interface. The app presents users with a text input box, allows them to enter any text, and provides feedback upon submission. This serves as a foundational example for building more complex form-based applications with Streamlit.
 
 ## User Preferences
 
@@ -18,20 +18,22 @@ Preferred communication style: Simple, everyday language.
 
 ### Application Structure
 - **Single-file architecture**: Everything contained in `app.py` for simplicity
-- **Session state pattern**: Uses `st.session_state` to track submission status and selected values
+- **Session state pattern**: Uses `st.session_state` to track submission status and user input
 - **Event-driven interactions**: Button click triggers state updates and UI feedback
 
 ### User Interaction Flow
-1. User views dropdown with predefined options
-2. User selects an option from the dropdown
+1. User views text input box with placeholder text
+2. User enters any text in the input field
 3. User clicks submit button
-4. Application updates session state and displays confirmation
-5. Selected value is displayed back to the user
+4. Application validates input (ensures it's not empty)
+5. Application updates session state and displays confirmation
+6. Input text and statistics are displayed back to the user
 
 ### Design Patterns
-- **Stateful UI**: Maintains user selections between interactions
-- **Immediate feedback**: Provides success messages and displays selected values
-- **Progressive disclosure**: Shows results only after submission
+- **Stateful UI**: Maintains user input between interactions
+- **Input validation**: Prevents submission of empty text
+- **Immediate feedback**: Provides success/error messages and displays entered text
+- **Progressive disclosure**: Shows results and statistics only after submission
 
 ## External Dependencies
 

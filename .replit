@@ -2,7 +2,7 @@ modules = ["python-3.11"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["wget", "pyflyby"]
+packages = ["wget", "pyflyby", "comma"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -28,6 +28,15 @@ author = "agent"
 task = "shell.exec"
 args = "streamlit run app.py --server.port 5000"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "py"
+mode = "sequential"
+author = 6611549
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 app.py"
 
 [[ports]]
 localPort = 5000
