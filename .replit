@@ -12,15 +12,6 @@ run = ["streamlit", "run", "app.py", "--server.port", "5000"]
 runButton = "Project"
 
 [[workflows.workflow]]
-name = "py"
-mode = "sequential"
-author = 6611549
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 app.py"
-
-[[workflows.workflow]]
 name = "Project"
 mode = "parallel"
 author = "agent"
