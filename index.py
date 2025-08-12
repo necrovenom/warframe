@@ -116,7 +116,10 @@ def displayOrders(all_orders: List[Dict[str, Any]]):
 
 def modified_loc(user_locations: str) -> Dict[str, Any]:
     """Modified version of loc() that returns results instead of printing them"""
-
+    
+    getMods()
+    getMarket()
+    
     locations_map = {
         "1": "Arbiters of Hexis",
         "2": "Cephalon Suda",
@@ -210,7 +213,6 @@ def search():
 
     # Call the modified loc function
     results = modified_loc(locations)
-    print("ran")
     return render_template('results.html',
                            mods_found=results.get('mods_found', {}),
                            orders=results.get('orders', []),
@@ -220,10 +222,6 @@ def search():
 
 if __name__ == '__main__':
     # Initialize data on startup
-    print("Loading Warframe mod data...")
-    getMods()
-    getMarket()
-    print("Data loaded successfully!")
 
     # Run the Flask app
     app.run(host='0.0.0.0', port=5000, debug=True)
