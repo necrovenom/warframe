@@ -12,6 +12,7 @@
 
     {% if mods_found %}
         <h2>Matching Mods:</h2>
+        <p>Found {{ mods_found | length }} mods in the specified locations:</p>
         <ul>
         {% for mod, locations in mods_found.items() %}
             <li><strong>{{ mod }}</strong> — {{ locations | join(', ') }}</li>
